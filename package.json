@@ -1,6 +1,4 @@
 {
-  "name": "next-redirects-response-hanging",
-  "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,8 +9,5 @@
     "next": "10.0.4",
     "react": "17.0.1",
     "react-dom": "17.0.1"
-  },
-  "devDependencies": {
-    "cypress": "^6.2.0"
   }
 }
