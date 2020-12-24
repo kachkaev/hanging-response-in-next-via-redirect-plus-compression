@@ -14,12 +14,16 @@ function customParseInt(value) {
   return `${r}` === value ? r : NaN;
 }
 
-function Opener({ title, pathname, uncompressedHttpBodySize }) {
+function Opener({ title, pathname, uncompressedHttpBodySize, doubleEndCall }) {
   const targetUrl = `${pathname}?uncompressedHttpBodySize=${uncompressedHttpBodySize}`;
   return (
     <div>
       {title}: <a href={targetUrl}>immediately</a> /{" "}
-      <a href={`/api/redirect?to=${encodeURIComponent(targetUrl)}`}>
+      <a
+        href={`/api/redirect?to=${encodeURIComponent(targetUrl)}${
+          doubleEndCall ? "&doubleEndCall=true" : ""
+        }`}
+      >
         via redirect
       </a>
     </div>
@@ -31,6 +35,8 @@ export default function Index() {
     rawUncompressedHttpBodySize,
     setRawUncompressedHttpBodySize,
   ] = React.useState(`${suggestedUncompressedHttpBodySizes[0]}`);
+
+  const [doubleEndCall, setDoubleEndCall] = React.useState(false);
 
   const uncompressedHttpBodySize = customParseInt(rawUncompressedHttpBodySize);
 
@@ -63,6 +69,14 @@ export default function Index() {
           </React.Fragment>
         ))}
       </p>
+      <div>
+        <input
+          type="checkbox"
+          checked={doubleEndCall}
+          onChange={() => setDoubleEndCall(!doubleEndCall)}
+        />{" "}
+        <label>Call res.end() after res.redirect() in /api/redirect</label>
+      </div>
       {uncompressedHttpBodySize < minUncompressedHttpBodySize ? (
         <p>Value should be greater than {minUncompressedHttpBodySize} B</p>
       ) : (
@@ -71,11 +85,13 @@ export default function Index() {
             title="open heavy page"
             pathname="/heavy-page"
             uncompressedHttpBodySize={uncompressedHttpBodySize}
+            doubleEndCall={doubleEndCall}
           />
           <Opener
             title="open heavy api handler"
             pathname="/api/heavy-handler"
             uncompressedHttpBodySize={uncompressedHttpBodySize}
+            doubleEndCall={doubleEndCall}
           />
         </p>
       )}
